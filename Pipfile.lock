@@ -1,12 +1,10 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "029732dc97ff1965765a5960147821db17d1354ef32ca0f61e5cebb4da4065c6"
+            "sha256": "bc6d41002a751ed3d92b4558cda2a19ced5b0f2188297346602d696db977ab74"
         },
         "pipfile-spec": 6,
-        "requires": {
-            "python_version": "3.7"
-        },
+        "requires": {},
         "sources": [
             {
                 "name": "pypi",
@@ -40,7 +38,8 @@
         },
         "jaraco.functools": {
             "hashes": [
-                "sha256:0cc09711acc0c716a2011a6924c60b2092ac07261aa1822e4277a0f0c5bf0548"
+                "sha256:0cc09711acc0c716a2011a6924c60b2092ac07261aa1822e4277a0f0c5bf0548",
+                "sha256:bad775f06e58bb8de5563bc2a8bf704168919e6779d6e849b1ca58b443e97f3b"
             ],
             "version": "==1.20"
         },
