@@ -9,7 +9,7 @@ sudo apt-get install python3 python3-pip
 pip3 install --user pipenv
 
 ### Install project python modules
-pypenv install --three
+pipenv install
 
 ## Useful commands
 ### Running python environment from commandline
