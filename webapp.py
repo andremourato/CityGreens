@@ -139,6 +139,14 @@ class WebApp(object):
     def signup(self):
         pass
 
+    @cherrypy.expose
+    def shop(self):
+        tparams = {
+            'user': self.get_user(),
+            'year': datetime.now().year,
+        }
+        return self.render('shop_navigation.html', tparams)
+
 
     @cherrypy.expose
     def shut(self):

@@ -26,4 +26,4 @@ pipenv install newdependency
 pipenv uninstall newdependency
 
 ### Sync packages
-pipenv update
+pipenv sync
