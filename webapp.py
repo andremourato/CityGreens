@@ -57,6 +57,7 @@ class WebApp(object):
         if row != None:
             if row[0] == pwd:
                 self.set_user(usr)
+
         db_con.close()
 
 
