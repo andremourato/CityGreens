@@ -82,28 +82,9 @@ class WebApp(object):
         }
         return self.render('index.html', tparams)
 
-
     @cherrypy.expose
-    def about(self):
-        tparams = {
-            'title': 'About',
-            'message': 'Your application description page.',
-            'user': self.get_user(),
-            'year': datetime.now().year,
-        }
-        return self.render('about.html', tparams)
-
-
-    @cherrypy.expose
-    def contact(self):
-        tparams = {
-            'title': 'Contact',
-            'message': 'Your contact page.',
-            'user': self.get_user(),
-            'year': datetime.now().year,
-        }
-        return self.render('contact.html', tparams)
-
+    def user_homepage(self):
+        return self.render('user_homepage.html')
 
     @cherrypy.expose
     def login(self, username=None, password=None):
@@ -129,16 +110,36 @@ class WebApp(object):
             else:
                 raise cherrypy.HTTPRedirect("/")
 
+    @cherrypy.expose
+    def signup(self):
+        pass
+
+    @cherrypy.expose
+    def about(self):
+        tparams = {
+            'title': 'About',
+            'message': 'Your application description page.',
+            'user': self.get_user(),
+            'year': datetime.now().year,
+        }
+        return self.render('about.html', tparams)
+
+
+    @cherrypy.expose
+    def contact(self):
+        tparams = {
+            'title': 'Contact',
+            'message': 'Your contact page.',
+            'user': self.get_user(),
+            'year': datetime.now().year,
+        }
+        return self.render('contact.html', tparams)
+
 
     @cherrypy.expose
     def logout(self):
         self.set_user()
         raise cherrypy.HTTPRedirect("/")
-
-
-    @cherrypy.expose
-    def signup(self):
-        pass
 
     @cherrypy.expose
     def shop(self):
