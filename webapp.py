@@ -55,11 +55,11 @@ class WebApp(object):
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
         db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "select password from users where username == '{}'".format(usr)
+        sql = "select * from user_db where email == '{}'".format(usr)
         cur = db_con.execute(sql)
         row = cur.fetchone()
         if row != None:
-            if row[0] == pwd:
+            if row[1] == pwd:
                 self.set_user(usr)
 
         db_con.close()
@@ -103,6 +103,10 @@ class WebApp(object):
             #self.do_authenticationJSON(username, password)
             self.do_authenticationDB(username, password)
             if not self.get_user()['is_authenticated']:
+                db_con = WebApp.db_connection(WebApp.dbsqlite)
+                sql = "select name from user_db where email == '{}'".format(username)
+                cur = db_con.execute(sql)
+                row = cur.fetchone()
                 tparams = {
                     'title': 'Login',
                     'errors': True,
@@ -111,7 +115,7 @@ class WebApp(object):
                 }
                 return self.render('login.html', tparams)
             else:
-                raise cherrypy.HTTPRedirect("/")
+                raise cherrypy.HTTPRedirect("/shop")
 
     @cherrypy.expose
     def signup(self, email=None, password=None, fullname=None, address=None, phone=None, card=None):
