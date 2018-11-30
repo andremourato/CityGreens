@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <section id="registerForm">
+            <form action="signup" method="post" name="info" class="form-horizontal">
+                <h4 style="padding-left: 3%">Sign Up</h4>
+                <hr />
+                <div class="form-group">
+                    <label for="id_email"></label>
+                    <div class="col-md-10">
+                        <input id="id_email" maxlength="254" name="email" type="text" placeholder="Email">
+                    </div>
+                </div>
+                {% if email == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Email is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_password"></label>
+                    <div class="col-md-10">
+                        <input id="id_password" name="password" type="password" placeholder="Password">
+                    </div>
+                </div>
+                {% if password == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Password is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_fullname"></label>
+                    <div class="col-md-10">
+                        <input id="id_fullname" name="fullname" type="text" placeholder="Full Name">
+                    </div>
+                </div>
+                {% if fullname == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Full name is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_address"></label>
+                    <div class="col-md-10">
+                        <input id="id_address" maxlength="254" name="address" type="text" placeholder="Address">
+                    </div>
+                </div>
+                {% if address == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Address is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_phone"></label>
+                    <div class="col-md-10">
+                        <input id="id_phone" maxlength="254" name="phone" type="text" placeholder="Phone number">
+                    </div>
+                </div>
+                {% if phone == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Phone number is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_card"></label>
+                    <div class="col-md-10">
+                        <input id="id_card" maxlength="254" name="card" type="text" placeholder="Card number">
+                    </div>
+                </div>
+                {% if card == 0 %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Card number is required.</p>
+                {% endif %}
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Sign Up" class="btn btn-default" />
+                    </div>
+                </div>
+                {% if errors %}
+                <p style="padding-left: 3%" class="validation-summary-errors">Please enter a valid input.</p>
+                {% endif %}
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/scripts/jquery.validate.min.js"></script>
+{% endblock %}

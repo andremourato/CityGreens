@@ -18,9 +18,9 @@ class WebApp(object):
                 )
 
 
-########################################################################################################################
-#   Utilities
-
+    '''
+    Utilities
+    '''
     def set_user(self, username=None):
         if username == None:
             cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
@@ -33,11 +33,15 @@ class WebApp(object):
             self.set_user()
         return cherrypy.session['user']
 
-
     def render(self, tpg, tps):
         template = self.env.get_template(tpg)
         return template.render(tps)
 
+    def db_add_user(db_file, email, password, fullname, address, phone, card):
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute("INSERT INTO user_db VALUES ('{}','{}','{}','{}','{}','{}','{}')".format(email,password,0,fullname,address,phone,card))
+        db_con.commit()
+        db_con.close()
 
     def db_connection(db_file):
         try:
@@ -70,10 +74,9 @@ class WebApp(object):
                 self.set_user(usr)
                 break
 
-
-########################################################################################################################
-#   Controllers
-
+    '''
+    Controllers
+    '''
     @cherrypy.expose
     def index(self):
         tparams = {
@@ -111,8 +114,21 @@ class WebApp(object):
                 raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
-    def signup(self):
-        pass
+    def signup(self, email=None, password=None, fullname=None, address=None, phone=None, card=None):
+        tparams = {'user' : self.get_user()}
+        if email != None and password != None and fullname != None and address != None and phone != None and card != None:
+            if len(email) != 0 and len(password) != 0 and len(fullname) != 0 and len(address) != 0 and len(phone) != 0 and len(card) != 0:
+                WebApp.db_add_user(WebApp.dbsqlite, email, password, fullname, address, phone, card)
+            tparams = {
+                'user' : self.get_user(),
+                'email' : len(email),
+                'password' : len(password),
+                'fullname' : len(fullname),
+                'address' : len(address),
+                'phone' : len(phone),
+                'card' : len(card)
+            }
+        return self.render('signup.html',tparams)
 
     @cherrypy.expose
     def about(self):
