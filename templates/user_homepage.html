@@ -2,33 +2,233 @@
 
 {% block content %}
 <style>
-body, html {
-    height: 100%;
-    margin: 0;
-}
+    body, html {
+        height: 100%;
+        margin: 0;
+    }
 
-.bg {
-    /* The image used */
-    background-image: url("../static/images/user_homepage_bg.jpg");
+    .bg {
+        /* The image used */
+        background-image: url("../static/images/user_homepage/user_homepage_bg.jpg");
 
-    /* Full height */
-    height: 100%;
+        /* Full height */
+        height: 100%;
 
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+        /* Center and scale the image nicely */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
 
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 1rem;
-    background-color: #efefef;
-    text-align: center;
-}
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 1rem;
+        background-color: #efefef;
+        text-align: center;
+    }
+
+    .settings-menu{
+        position: fixed;
+        top: 20%;
+        left: 7%;
+        width: 30%;
+    }
+
+    .item{
+        text-align: left;
+    }
+
+    .field{
+        color: grey;
+        font-size: 14px;
+    }
 </style>
-<div class="bg">Hello</div>
+
+<script>
+
+    var show_password = true; //If the password is not being shown, it's because the input box is active
+    var show_fullname = true;
+    var show_address = true;
+    var show_phone = true;
+    var show_card = true;
+
+    function clickPassword(){
+        var div_element = document.getElementById("field-password");
+        var div_element_field = document.getElementById("field-password-text");
+
+        if(show_password){
+            div_element.innerHTML =
+                '<form action=\"user_homepage\" method=\"post\">'+
+                '<input class=\"form-control input-sm\" id=\"inputsm\" type=\"password\" name=\"password\" style=\"float:left\" placeholder="New Password">' +
+                '<input type="submit" value="✔" class="btn btn-success" style=\"float:right\">'+
+                '</form>';
+            div_element_field.style.display = 'none';
+            show_password = false;
+        }else{
+            div_element.innerHTML = "{{password}}";
+            div_element_field.style.display = 'block';
+            show_password = true;
+        }
+
+    }
+
+    function clickFullname(){
+        var div_element = document.getElementById("field-fullname");
+        var div_element_field = document.getElementById("field-fullname-text");
+
+        if(show_fullname){
+            div_element.innerHTML =
+                '<form action=\"user_homepage\" method=\"post\">'+
+                '<input class=\"form-control input-sm\" id=\"inputsm\" type=\"text\" name=\"fullname\" style=\"float:left\" placeholder="New name">' +
+                '<input type="submit" value="✔" class="btn btn-success" style=\"float:right\">'+
+                '</form>';
+            div_element_field.style.display = 'none';
+            show_fullname = false;
+        }else{
+            div_element.innerHTML = "{{fullname}}";
+            div_element_field.style.display = 'block';
+            show_fullname = true;
+        }
+    }
+
+    function clickAddress(){
+        var div_element = document.getElementById("field-address");
+        var div_element_field = document.getElementById("field-address-text");
+
+        if(show_address){
+            div_element.innerHTML =
+                '<form action=\"user_homepage\" method=\"post\">'+
+                '<input class=\"form-control input-sm\" id=\"inputsm\" type=\"text\" name=\"address\" style=\"float:left\" placeholder="New Address">' +
+                '<input type="submit" value="✔" class="btn btn-success" style=\"float:right\">'+
+                '</form>';
+            div_element_field.style.display = 'none';
+            show_address = false;
+        }else{
+            div_element.innerHTML = "{{address}}";
+            div_element_field.style.display = 'block';
+            show_address = true;
+        }
+    }
+
+    function clickPhone(){
+        var div_element = document.getElementById("field-phone");
+        var div_element_field = document.getElementById("field-phone-text");
+
+        if(show_phone){
+            div_element.innerHTML =
+                '<form action=\"user_homepage\" method=\"post\">'+
+                '<input class=\"form-control input-sm\" id=\"inputsm\" type=\"text\" name=\"phone\" style=\"float:left\" placeholder="New Phone Number">' +
+                '<input type="submit" value="✔" class="btn btn-success" style=\"float:right\">'+
+                '</form>';
+            div_element_field.style.display = 'none';
+            show_phone = false;
+        }else{
+            div_element.innerHTML = "{{phone}}";
+            div_element_field.style.display = 'block';
+            show_phone = true;
+        }
+    }
+
+    function clickCard(){
+        var div_element = document.getElementById("field-card");
+        var div_element_field = document.getElementById("field-card-text");
+
+        if(show_card){
+            div_element.innerHTML =
+                '<form action=\"user_homepage\" method=\"post\">'+
+                '<input class=\"form-control input-sm\" id=\"inputsm\" type=\"text\" name=\"card\" style=\"float:left\" placeholder="New Card Number">' +
+                '<input type="submit" value="✔" class="btn btn-success" style=\"float:right\">'+
+                '</form>';
+            div_element_field.style.display = 'none';
+            show_card = false;
+        }else{
+            div_element.innerHTML = "{{card}}";
+            div_element_field.style.display = 'block';
+            show_card = true;
+        }
+    }
+
+</script>
+
+<div class="bg">
+    <div class="table settings-menu">
+        <table class="table table-hover">
+          <tbody>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_email.png">
+              </th>
+              <td class="item">
+                  <div>{{email}}</div>
+                  <div class="field">E-mail</div>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_password.png">
+              </th>
+              <td class="item">
+                  <div id="field-password">{{password}}</div>
+                  <div class="field" id="field-password-text">Password</div>
+              </td>
+              <td>
+                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPassword()" onmouseover="" style="cursor: pointer;">
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_fullname.png">
+              </th>
+              <td class="item">
+                  <div id="field-fullname">{{fullname}}</div>
+                  <div class="field" id="field-fullname-text">Full Name</div>
+              </td>
+              <td>
+                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickFullname()" onmouseover="" style="cursor: pointer;">
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_address.png">
+              </th>
+              <td class="item">
+                  <div id="field-address">{{address}}</div>
+                  <div class="field" id="field-address-text">Address</div>
+              </td>
+              <td>
+                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickAddress()" onmouseover="" style="cursor: pointer;">
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_phone.png">
+              </th>
+              <td class="item">
+                  <div id="field-phone">{{phone}}</div>
+                  <div class="field" id="field-phone-text">Phone Number</div>
+              </td>
+              <td>
+                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPhone()" onmouseover="" style="cursor: pointer;">
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                  <img src="../static/images/user_homepage/user_homepage_icon_card.jpg">
+              </th>
+              <td class="item">
+                  <div id="field-card">{{card}}</div>
+                  <div class="field" id="field-card-text">Payment Card Number</div>
+              </td>
+              <td>
+                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickCard()" onmouseover="" style="cursor: pointer;">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+</div>
 
 
 {% endblock %}

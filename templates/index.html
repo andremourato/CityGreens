@@ -1,18 +1,52 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
 {% block content %}
 
+<div class="slideshow-container">
 
-<div class="container" style="background: url('/static/images/tomatoes.jpg'); width: 100%; height: 100%">
-    <div class="row">
-        <div class="col-lg-6">
-            <h1 class="mt-5">The Big Picture</h1>
+    <div class="mySlides fade">
+        <div class="numbertext" style="margin-left: -225px;">1 / 3</div>
+
+        <img src="/static/images/carrot_darken.jpg" style="width:1450px;height: 600px; margin-left: -225px;">
+        <div class="center-table">
+            <div class="logo"></div>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt
-                voluptates rerum eveniet sapiente repellat esse, doloremque quod
-                recusandae deleniti nostrum assumenda vel beatae sed aut modi nesciunt
-                porro quisquam voluptatem.
+                Welcome to CityGreens , we hope you will find whatever products you so desire here ;)
             </p>
+            <button class="button"onclick="location.href='/login'";>BUY NOW</button>
         </div>
     </div>
+
+    <div class="mySlides fade">
+        <div class="numbertext"style="margin-left: -225px;">2 / 3</div>
+        <img src="/static/images/tomatoes.jpg"style="width:1450px;height: 600px; margin-left: -225px;">
+        <div class="center-table">
+            <div class="logo"></div>
+            <p>
+               Welcome to CityGreens , we hope you will find whatever products you so desire here ;)
+            </p>
+            <button class="button"onclick="location.href='/login'";>BUY NOW</button>
+        </div>
+    </div>
+
+    <div class="mySlides fade">
+        <div class="numbertext"style="margin-left: -225px;">3 / 3</div>
+        <img src="/static/images/greenbeans.jpg" style="width:1450px;height: 600px; margin-left: -225px;">
+        <div class="center-table">
+            <div class="logo"></div>
+            <p>
+               Welcome to CityGreens , we hope you will find whatever products you so desire here ;)
+            </p>
+            <button class="button"onclick="location.href='/login'";>BUY NOW</button>
+        </div>
+    </div>
+
 </div>
+
+
+<div style="text-align:center">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
 {% endblock %}

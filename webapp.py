@@ -58,6 +58,21 @@ class WebApp(object):
         }
         return user_info
 
+    def db_modify_user(db_file,email,password,fullname,address,phone,card):
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute("SELECT * FROM user_db WHERE email == '{}'".format(email))
+        row = cur.fetchone()
+        password = password if password else row[1]
+        fullname = fullname if fullname else row[3]
+        address = address if address else row[4]
+        phone = phone if phone else row[5]
+        card = card if card else row[6]
+        new_elem = (email, password, 0, fullname, address, phone, card)
+        db_con.execute("DELETE FROM user_db WHERE email == '{}'".format(email))
+        db_con.execute("INSERT INTO user_db VALUES {}".format(new_elem))
+        db_con.commit()
+        db_con.close()
+
     def db_connection(db_file):
         try:
             conn = sqlite3.connect(db_file)
@@ -65,7 +80,6 @@ class WebApp(object):
         except Error as e:
             print(e)
         return None
-
 
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
@@ -101,10 +115,13 @@ class WebApp(object):
         return self.render('index.html', tparams)
 
     @cherrypy.expose
-    def user_homepage(self):
+    def user_homepage(self,password=None,fullname=None,address=None,phone=None,card=None):
         user = self.get_user()
         # User must be authenticated before accessing the user homepage
         if user['is_authenticated']:
+            if password or fullname or address or phone or card:
+                print(fullname)
+                WebApp.db_modify_user(WebApp.dbsqlite,user['username'],password,fullname,address,phone,card)
             db_info = self.db_get_user(user)
             tparams = {
                 'user' : user,
