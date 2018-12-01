@@ -17,6 +17,8 @@
       type="text/css"
       href="/static/content/bootstrap.min.css"
     />
+    <!-- home css-->
+    <link rel="stylesheet" type="text/css" href="/static/content/center.css" />
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <!-- 3collumn layout -->
@@ -25,7 +27,7 @@
     <link href="/static/shop_navigation/css/shop-item.css" rel="stylesheet" />
     <style>
       .bg-dark {
-        background-color: rgba(0, 200, 0, 0.5) !important;
+        background-color: rgba(0, 153, 0, 0.85) !important;
       }
     </style>
   </head>
@@ -48,7 +50,8 @@
       <div class="collapse navbar-collapse" id="navbarDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item active"><a class="nav-link" href="shop">Shop</a></li>
+          <li class="nav-item active"><a class="nav-link">Shop</a></li>
+          {% include 'user_homepage_partial.html' %}
         </ul>
         {% include 'loginpartial.html' %}
       </div>
@@ -61,8 +64,19 @@
       </div>
       <!-- /container -->
     </main>
-
-    <footer class="py-5 bg-dark">
+    <style>
+      .footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 1rem;
+        background-color: #efefef;
+        text-align: center;
+        opacity: 1.0;
+      }
+    </style>
+    <footer class="py-5 bg-dark footer">
       <div class="container">
         <p class="m-0 text-center text-white">
           Copyright &copy; CityGreens 2018
@@ -76,6 +90,7 @@
       ==================================================
     -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/scripts/slideshow.js"></script>
     <script src="/static/scripts/jquery-3.3.1.slim.min.js"></script>
     <script src="/static/scripts/popper.min.js"></script>
     <script src="/static/scripts/bootstrap.min.js"></script>

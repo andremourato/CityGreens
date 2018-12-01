@@ -1,0 +1,9 @@
+{% if user.is_authenticated %}
+
+<li class="nav-item active"><a class="nav-link" href="/user_homepage">Profile</a></li>
+
+{% else %}
+
+<li class="nav-item active"><a class="nav-link" href="/login">Profile</a></li>
+
+{% endif %}
