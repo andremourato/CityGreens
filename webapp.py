@@ -43,6 +43,21 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
+    def db_get_user(db_file,user):
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute("SELECT * FROM user_db WHERE email == '{}'".format(user['username']))
+        row = cur.fetchone()
+        db_con.close()
+        user_info = {
+            'email' : row[0],
+            'password' : row[1],
+            'fullname' : row[3],
+            'address'  : row[4],
+            'phone'    : row[5],
+            'card'     : row[6]
+        }
+        return user_info
+
     def db_connection(db_file):
         try:
             conn = sqlite3.connect(db_file)
@@ -87,7 +102,22 @@ class WebApp(object):
 
     @cherrypy.expose
     def user_homepage(self):
-        return self.render('user_homepage.html')
+        user = self.get_user()
+        # User must be authenticated before accessing the user homepage
+        if user['is_authenticated']:
+            db_info = self.db_get_user(user)
+            tparams = {
+                'user' : user,
+                'email' : db_info['email'],
+                'password' : db_info['password'],
+                'fullname' : db_info['fullname'],
+                'address' : db_info['address'],
+                'phone' : db_info['phone'],
+                'card'  : db_info['card']
+            }
+            return self.render('user_homepage.html',tparams)
+        else:
+            raise cherrypy.HTTPRedirect("/login")
 
     @cherrypy.expose
     def login(self, username=None, password=None):
@@ -115,7 +145,7 @@ class WebApp(object):
                 }
                 return self.render('login.html', tparams)
             else:
-                raise cherrypy.HTTPRedirect("/shop")
+                raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
     def signup(self, email=None, password=None, fullname=None, address=None, phone=None, card=None):

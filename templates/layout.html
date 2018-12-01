@@ -25,7 +25,7 @@
     <link href="/static/shop_navigation/css/shop-item.css" rel="stylesheet" />
     <style>
       .bg-dark {
-        background-color: rgba(0, 200, 0, 0.5) !important;
+        background-color: rgba(0, 153, 0, 0.85) !important;
       }
     </style>
   </head>
@@ -48,6 +48,7 @@
       <div class="collapse navbar-collapse" id="navbarDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
+          {% include 'user_homepage_partial.html' %}
           <li class="nav-item active"><a class="nav-link" href="shop">Shop</a></li>
         </ul>
         {% include 'loginpartial.html' %}
@@ -61,8 +62,19 @@
       </div>
       <!-- /container -->
     </main>
-
-    <footer class="py-5 bg-dark">
+    <style>
+      .footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 1rem;
+        background-color: #efefef;
+        text-align: center;
+        opacity: 1.0;
+      }
+    </style>
+    <footer class="py-5 bg-dark footer">
       <div class="container">
         <p class="m-0 text-center text-white">
           Copyright &copy; CityGreens 2018
