@@ -17,6 +17,7 @@
       type="text/css"
       href="/static/content/bootstrap.min.css"
     />
+    <!-- home css-->
     <link rel="stylesheet" type="text/css" href="/static/content/center.css" />
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
@@ -49,7 +50,7 @@
       <div class="collapse navbar-collapse" id="navbarDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item active"><a class="nav-link" href="shop">Shop</a></li>
+          <li class="nav-item active"><a class="nav-link">Shop</a></li>
           {% include 'user_homepage_partial.html' %}
         </ul>
         {% include 'loginpartial.html' %}
@@ -58,6 +59,7 @@
 
     <main role="main">
       <div>
+        <p></p>
         {% block content %} {% endblock %}
       </div>
       <!-- /container -->
@@ -88,6 +90,7 @@
       ==================================================
     -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/scripts/slideshow.js"></script>
     <script src="/static/scripts/jquery-3.3.1.slim.min.js"></script>
     <script src="/static/scripts/popper.min.js"></script>
     <script src="/static/scripts/bootstrap.min.js"></script>
