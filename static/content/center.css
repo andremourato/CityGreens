@@ -15,9 +15,10 @@
   background-position: center;
   background-size: cover;
   position: absolute;
-  top: 40%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 .center-table p {
 
@@ -27,7 +28,6 @@
   color: white;
   border: 10px solid white;
   vertical-align: middle;
-  border-style: solid;
   border-width: 2px;
 
   position: relative;
@@ -49,7 +49,7 @@
 
 /* Slideshow container */
 .slideshow-container {
-  max-width: 1000px;
+  max-width: 100%;
   position: relative;
   margin: auto;
 }
@@ -76,8 +76,8 @@
 
 /* The dots/bullets/indicators */
 .dot {
-  height: 15px;
-  width: 15px;
+  height: 10px;
+  width: 10px;
   margin: 0 2px;
   background-color: #eee;
   border-radius: 50%;
@@ -122,10 +122,15 @@
     cursor: pointer;
     border-radius: 50%;
     position: relative;
-    top: 125%;
+    top: 130%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 1;
 }
 .button:hover {
     background-color: green;
 }
+
+.contain {object-fit: contain;}
+.cover {object-fit: cover;}
+.fill {object-fit: fill;}
