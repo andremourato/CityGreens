@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 import sqlite3
 from sqlite3 import Error
-import json
+from models import *
 
 
 class WebApp(object):
@@ -43,19 +43,20 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
+    @db_session
     def db_get_user(db_file,user):
-        db_con = WebApp.db_connection(WebApp.dbsqlite)
-        cur = db_con.execute("SELECT * FROM user_db WHERE email == '{}'".format(user['username']))
-        row = cur.fetchone()
-        db_con.close()
-        user_info = {
-            'email' : row[0],
-            'password' : row[1],
-            'fullname' : row[3],
-            'address'  : row[4],
-            'phone'    : row[5],
-            'card'     : row[6]
-        }
+        print(user)
+        user = User[user['username']]
+        print(user)
+        if user:
+            user_info = {
+                'email' : user.email,
+                'password' : user.password,
+                'fullname' : user.name,
+                'address'  : user.address,
+                'phone'    : user.phone,
+                'card'     : user.card,
+            }
         return user_info
 
     def db_modify_user(db_file,email,password,fullname,address,phone,card):
@@ -137,6 +138,7 @@ class WebApp(object):
             raise cherrypy.HTTPRedirect("/login")
 
     @cherrypy.expose
+    @db_session
     def login(self, username=None, password=None):
         if username == None:
             tparams = {
@@ -148,7 +150,8 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             #self.do_authenticationJSON(username, password)
-            self.do_authenticationDB(username, password)
+            if User[username] and User[username].password == password:
+                self.set_user(username)
             if not self.get_user()['is_authenticated']:
                 db_con = WebApp.db_connection(WebApp.dbsqlite)
                 sql = "select name from user_db where email == '{}'".format(username)
@@ -165,11 +168,12 @@ class WebApp(object):
                 raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
+    @db_session
     def signup(self, email=None, password=None, fullname=None, address=None, phone=None, card=None):
         tparams = {'user' : self.get_user()}
         if email != None and password != None and fullname != None and address != None and phone != None and card != None:
             if len(email) != 0 and len(password) != 0 and len(fullname) != 0 and len(address) != 0 and len(phone) != 0 and len(card) != 0:
-                WebApp.db_add_user(WebApp.dbsqlite, email, password, fullname, address, phone, card)
+                User(email=email, password=password, name=fullname, address=address, phone=phone, card=card, superuser=False)
             tparams = {
                 'user' : self.get_user(),
                 'email' : len(email),
