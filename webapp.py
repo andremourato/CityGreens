@@ -3,6 +3,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 import os
 from datetime import datetime
 import sqlite3
+import json
 from sqlite3 import Error
 from models import *
 
@@ -21,11 +22,11 @@ class WebApp(object):
     '''
     Utilities
     '''
-    def set_user(self, username=None):
+    def set_user(self, username=None, superuser=False):
         if username == None:
             cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
         else:
-            cherrypy.session['user'] = {'is_authenticated': True, 'username': username}
+            cherrypy.session['user'] = {'is_authenticated': True, 'username': username, 'superuser': superuser}
 
 
     def get_user(self):
@@ -82,27 +83,12 @@ class WebApp(object):
             print(e)
         return None
 
+    @db_session
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
-        db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "select * from user_db where email == '{}'".format(usr)
-        cur = db_con.execute(sql)
-        row = cur.fetchone()
+        row = User.get(email=usr, password=pwd)
         if row != None:
-            if row[1] == pwd:
-                self.set_user(usr)
-
-        db_con.close()
-
-
-    def do_authenticationJSON(self, usr, pwd):
-        user = self.get_user()
-        db_json = json.load(open(WebApp.dbjson))
-        users = db_json['users']
-        for u in users:
-            if u['username'] == usr and u['password'] == pwd:
-                self.set_user(usr)
-                break
+            self.set_user(usr)
 
     '''
     Controllers
@@ -150,8 +136,9 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             #self.do_authenticationJSON(username, password)
-            if User[username] and User[username].password == password:
-                self.set_user(username)
+            if User[username] != None and User[username].password == password:
+                print(username)
+                self.set_user(username=username, superuser=User[username].superuser)
             if not self.get_user()['is_authenticated']:
                 db_con = WebApp.db_connection(WebApp.dbsqlite)
                 sql = "select name from user_db where email == '{}'".format(username)
@@ -165,6 +152,7 @@ class WebApp(object):
                 }
                 return self.render('login.html', tparams)
             else:
+                print(self.get_user())
                 raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
@@ -213,13 +201,45 @@ class WebApp(object):
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
+    @db_session
     def shop(self):
         tparams = {
             'user': self.get_user(),
             'year': datetime.now().year,
+            'products': select(p for p in Product )
         }
         return self.render('shop_navigation.html', tparams)
 
+    @cherrypy.expose
+    @db_session
+    @cherrypy.tools.json_in()
+    def product_management(self):
+        user = self.get_user()
+        if user['superuser'] == True:
+            if cherrypy.request.method == "POST":
+                print(cherrypy.request.json)
+                dicio = cherrypy.request.json
+                if dicio['mode'] == 'update':
+                    print('update')
+                    product = Product[dicio['id']]
+                    product.name = dicio['name']
+                    product.weight = dicio['weight']
+                elif dicio['mode'] == 'create':
+                    print('create')
+                    Product(name=dicio['name'], weight=dicio['weight'])
+                elif dicio['mode'] == 'delete':
+                    print('fdddss')
+                    Product[dicio['id']].delete()
+                else:
+                    pass
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product_Wrapper)
+            }
+            return self.render('product_management.html', tparams)
+        else:
+            raise cherrypy.HTTPRedirect("/login")
 
     @cherrypy.expose
     def shut(self):

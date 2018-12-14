@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
   <head>
+
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -30,6 +31,8 @@
         background-color: rgba(0, 153, 0, 0.85) !important;
       }
     </style>
+    {% block head %}
+    {% endblock head %}
   </head>
 
   <body>
@@ -50,7 +53,7 @@
       <div class="collapse navbar-collapse" id="navbarDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item active"><a class="nav-link">Shop</a></li>
+          <li class="nav-item active"><a class="nav-link" href="/shop">Shop</a></li>
           {% include 'user_homepage_partial.html' %}
         </ul>
         {% include 'loginpartial.html' %}
@@ -90,9 +93,11 @@
       ==================================================
     -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="/static/scripts/slideshow.js"></script>
-    <script src="/static/scripts/jquery-3.3.1.slim.min.js"></script>
     <script src="/static/scripts/popper.min.js"></script>
     <script src="/static/scripts/bootstrap.min.js"></script>
+    {% block functions %}
+    {% endblock functions %}
   </body>
 </html>

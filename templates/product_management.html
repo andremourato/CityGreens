@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<style>
+table #delete_product{
+    display: none;
+}
+table tr:hover #delete_product{
+    display: block;
+}
+</style>
+{% endblock head %}
+
+{% block content %}
+
+<table style="width:100%" class="table-striped">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Weight</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td class="id">{{product.id}}</td>
+        <td><input class="form-control" value="{{product.name}}"></td>
+        <td><input class="form-control" value="{{product.weight}}"></td>
+        <td><div><button id="delete_product" type="button" data-id="{{product.id}}" class="btn btn-danger">Delete</button></div></td>
+
+    </tr>
+    {% endfor %}
+
+</table>
+<div id="new_product">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Add New Product
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="name" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input class="form-control" id="name" placeholder="Name"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="weight" class="form-control" placeholder="Weight">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="save" type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block functions %}
+<script>
+    $(document).ready(function () {
+        $('tr').change(function () {
+            var object = {
+                mode: 'update',
+                id: $(this).find('td')[0].innerHTML,
+                name: $(this).find('input')[0].value,
+                weight: $(this).find('input')[1].value
+            };
+            console.log(object);
+            ajax_post(object);
+        });
+        $('#save').click(function () {
+            var object = {
+                mode: 'create',
+                name: $('#new_product').find('input')[0].value,
+                weight: $('#new_product').find('input')[1].value
+            };
+            console.log(object);
+            ajax_post(object)
+        });
+        $(this).on('click', '#delete_product', function () {
+            console.log('fdddddsss');
+            var object = {
+                mode: 'delete',
+                id: $(this).data('id')
+            };
+            console.log(object);
+            ajax_post(object);
+        });
+        function ajax_post(object) {
+            $.ajax({
+                type: 'POST',
+                url: '/product_management',
+                data: JSON.stringify(object),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+            window.location.reload();
+        }
+    });
+</script>
+{% endblock functions %}
