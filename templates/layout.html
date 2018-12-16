@@ -66,9 +66,10 @@
       </div>
       <!-- /container -->
     </main>
+    {% block footer %}
     <style>
       .footer {
-        position: relative;
+        position: absolute;
         bottom:0px;
         width:100%;
         background-color: #efefef;
@@ -85,6 +86,7 @@
       </div>
       <!-- /.container -->
     </footer>
+    {% endblock %}
 
     <!--
       JQuery and Bootstrap core
