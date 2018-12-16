@@ -106,3 +106,6 @@ venv.bak/
 # Ide's and code editors
 .vscode
 .idea
+data/db.sqlite3
+data/db.sqlite3
+data/db.sqlite3
