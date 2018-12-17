@@ -64,24 +64,23 @@
 
     <main role="main">
       <div>
-        <p></p>
         {% block content %} {% endblock %}
       </div>
       <!-- /container -->
     </main>
+    {% block footer %}
     <style>
       .footer {
         position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        padding: 1rem;
+        bottom:0px;
+        width:100%;
         background-color: #efefef;
         text-align: center;
         opacity: 1.0;
       }
     </style>
-    <footer class="py-5 bg-dark footer">
+
+    <footer class="py-5 bg-dark footer" >
       <div class="container">
         <p class="m-0 text-center text-white">
           Copyright &copy; CityGreens 2018
@@ -89,6 +88,7 @@
       </div>
       <!-- /.container -->
     </footer>
+    {% endblock %}
 
     <!--
       JQuery and Bootstrap core
