@@ -1,12 +1,13 @@
 import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
-import os
 from datetime import datetime
 import sqlite3
 import json
 from sqlite3 import Error
 from models import *
-
+import os
+import io
+import base64
 
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
@@ -88,7 +89,7 @@ class WebApp(object):
         user = self.get_user()
         row = User.get(email=usr, password=pwd)
         if row != None:
-            self.set_user(usr)
+            self.set_user(usr, row.superuser)
 
     '''
     Controllers
@@ -135,15 +136,8 @@ class WebApp(object):
             }
             return self.render('login.html', tparams)
         else:
-            #self.do_authenticationJSON(username, password)
-            if User[username] != None and User[username].password == password:
-                print(username)
-                self.set_user(username=username, superuser=User[username].superuser)
+            self.do_authenticationDB(username, password)
             if not self.get_user()['is_authenticated']:
-                db_con = WebApp.db_connection(WebApp.dbsqlite)
-                sql = "select name from user_db where email == '{}'".format(username)
-                cur = db_con.execute(sql)
-                row = cur.fetchone()
                 tparams = {
                     'title': 'Login',
                     'errors': True,
@@ -152,7 +146,6 @@ class WebApp(object):
                 }
                 return self.render('login.html', tparams)
             else:
-                print(self.get_user())
                 raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
@@ -217,34 +210,56 @@ class WebApp(object):
         user = self.get_user()
         if user['superuser'] == True:
             if cherrypy.request.method == "POST":
-                print(cherrypy.request.json)
                 dicio = cherrypy.request.json
                 if dicio['mode'] == 'update':
-                    print('update')
                     product = Product[dicio['id']]
                     product.name = dicio['name']
                     product.weight = dicio['weight']
-                elif dicio['mode'] == 'create':
-                    print('create')
-                    Product(name=dicio['name'], weight=dicio['weight'])
                 elif dicio['mode'] == 'delete':
-                    print('fdddss')
                     Product[dicio['id']].delete()
                 else:
                     pass
+
+            fn = os.path.join(os.path.dirname(__file__), "data/img/")
+            array = dict()
+            for file in os.listdir(fn):
+                file1 = open(os.path.join("data/img/", file), "rb")
+                f = base64.b64encode(file1.read())
+                array[file] = f
+                print(file)
             tparams = {
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'products': select(p for p in Product_Wrapper)
+                'products': select(p for p in Product_Wrapper),
+                'array': array
             }
             return self.render('product_management.html', tparams)
         else:
-            raise cherrypy.HTTPRedirect("/login")
+            raise cherrypy.HTTPRedirect("/user_homepage")
+
+
+    
 
     @cherrypy.expose
     def shut(self):
         cherrypy.engine.exit()
 
+    @cherrypy.expose
+    @db_session
+    def new_product(self, name, weight, price, description, image):
+        p = Product(name=name, weight=weight, price=price, description=description)
+        commit()
+        fn = os.path.join(os.path.dirname(__file__), "data/img/" + str(p.id) + ".jpg")
+        file1 = io.BytesIO(image.file.read())
+        myFile = open(fn, 'wb')
+        myFile.write(file1.read1())
+        myFile.close()
+        tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product_Wrapper)
+            }
+        return self.render('product_management.html', tparams)
 
 if __name__ == '__main__':
     conf = {
@@ -255,6 +270,10 @@ if __name__ == '__main__':
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': './static'
+        },
+        '/img': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': './data/img'
         }
     }
     cherrypy.quickstart(WebApp(), '/', conf)

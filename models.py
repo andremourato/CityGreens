@@ -24,6 +24,8 @@ class Nutritional_Info(db.Entity):
 class Product_Wrapper(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str)
+    description = Required(str)
+    price = Required(float)
     subscription = Set("Subscription")
     transaction = Set("Transaction")
 

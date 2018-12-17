@@ -2,7 +2,7 @@
 
 {% block head %}
 <style>
-table #delete_product{
+    table #delete_product{
     display: none;
 }
 table tr:hover #delete_product{
@@ -13,23 +13,6 @@ table tr:hover #delete_product{
 
 {% block content %}
 
-<table style="width:100%" class="table-striped">
-    <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Weight</th>
-    </tr>
-    {% for product in products %}
-    <tr>
-        <td class="id">{{product.id}}</td>
-        <td><input class="form-control" value="{{product.name}}"></td>
-        <td><input class="form-control" value="{{product.weight}}"></td>
-        <td><div><button id="delete_product" type="button" data-id="{{product.id}}" class="btn btn-danger">Delete</button></div></td>
-
-    </tr>
-    {% endfor %}
-
-</table>
 <div id="new_product">
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
@@ -39,26 +22,69 @@ table tr:hover #delete_product{
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="name" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <form>
+            <form action='/new_product' method='POST' enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <input class="form-control" id="name" placeholder="Name"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <input class="form-control" name="name" placeholder="Name"></h5>
                     </div>
                     <div class="modal-body">
-                        <input id="weight" class="form-control" placeholder="Weight">
+                        <input name="weight" class="form-control" placeholder="Weight">
                     </div>
+                    <div class="modal-body">
+                        <textarea name="price" class="form-control" cols="40" rows="5" placeholder="Price"></textarea>
+                    </div>
+                    <div class="modal-body">
+                            <textarea name="description" class="form-control" cols="40" rows="5" placeholder="Description"></textarea>
+                        </div>
+                    <div class="modal-body"> 
+                            <input type="file" class="form-control-file" name="image">
+                        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button id="save" type="button" class="btn btn-primary">Save changes</button>
+                        <button id="save" type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<table style="width:75%" class="table-striped">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Weight</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Image</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td class="id">{{product.id}}</td>
+        <td><input class="form-control" value="{{product.name}}"></td>
+        <td><input class="form-control" value="{{product.weight}}"></td>
+        <td><input class="form-control" value="{{product.description}}"></td>
+        <td><input class="form-control" value="{{product.price}}"></td>
+        <td>
+            <div>
+                <img src="/img/{{product.id}}.jpg" style="width:50px;">
+                <form method="post">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="myFile">
+                        <button id="replace_image" type="button" data-id="{{product.id}}" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </td>
+        <td>
+            <div><button id="delete_product" type="button" data-id="{{product.id}}" class="btn btn-danger">Delete</button></div>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
 {% endblock content %}
 {% block functions %}
 <script>
@@ -73,17 +99,7 @@ table tr:hover #delete_product{
             console.log(object);
             ajax_post(object);
         });
-        $('#save').click(function () {
-            var object = {
-                mode: 'create',
-                name: $('#new_product').find('input')[0].value,
-                weight: $('#new_product').find('input')[1].value
-            };
-            console.log(object);
-            ajax_post(object)
-        });
         $(this).on('click', '#delete_product', function () {
-            console.log('fdddddsss');
             var object = {
                 mode: 'delete',
                 id: $(this).data('id')
@@ -91,6 +107,7 @@ table tr:hover #delete_product{
             console.log(object);
             ajax_post(object);
         });
+
         function ajax_post(object) {
             $.ajax({
                 type: 'POST',
@@ -102,7 +119,6 @@ table tr:hover #delete_product{
                     console.log(data)
                 }
             });
-            window.location.reload();
         }
     });
 </script>
