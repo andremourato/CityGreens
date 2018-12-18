@@ -1,11 +1,13 @@
 import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
-import os
 from datetime import datetime
 import sqlite3
-from sqlite3 import Error
 import json
-
+from sqlite3 import Error
+from models import *
+import os
+import io
+import base64
 
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
@@ -21,11 +23,11 @@ class WebApp(object):
     '''
     Utilities
     '''
-    def set_user(self, username=None):
+    def set_user(self, username=None, superuser=False):
         if username == None:
             cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
         else:
-            cherrypy.session['user'] = {'is_authenticated': True, 'username': username}
+            cherrypy.session['user'] = {'is_authenticated': True, 'username': username, 'superuser': superuser}
 
 
     def get_user(self):
@@ -43,19 +45,20 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
+    @db_session
     def db_get_user(db_file,user):
-        db_con = WebApp.db_connection(WebApp.dbsqlite)
-        cur = db_con.execute("SELECT * FROM user_db WHERE email == '{}'".format(user['username']))
-        row = cur.fetchone()
-        db_con.close()
-        user_info = {
-            'email' : row[0],
-            'password' : row[1],
-            'fullname' : row[3],
-            'address'  : row[4],
-            'phone'    : row[5],
-            'card'     : row[6]
-        }
+        print(user)
+        user = User[user['username']]
+        print(user)
+        if user:
+            user_info = {
+                'email' : user.email,
+                'password' : user.password,
+                'fullname' : user.name,
+                'address'  : user.address,
+                'phone'    : user.phone,
+                'card'     : user.card,
+            }
         return user_info
 
     def db_modify_user(db_file,email,password,fullname,address,phone,card):
@@ -81,27 +84,12 @@ class WebApp(object):
             print(e)
         return None
 
+    @db_session
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
-        db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "select * from user_db where email == '{}'".format(usr)
-        cur = db_con.execute(sql)
-        row = cur.fetchone()
+        row = User.get(email=usr, password=pwd)
         if row != None:
-            if row[1] == pwd:
-                self.set_user(usr)
-
-        db_con.close()
-
-
-    def do_authenticationJSON(self, usr, pwd):
-        user = self.get_user()
-        db_json = json.load(open(WebApp.dbjson))
-        users = db_json['users']
-        for u in users:
-            if u['username'] == usr and u['password'] == pwd:
-                self.set_user(usr)
-                break
+            self.set_user(usr, row.superuser)
 
     '''
     Controllers
@@ -137,6 +125,7 @@ class WebApp(object):
             raise cherrypy.HTTPRedirect("/login")
 
     @cherrypy.expose
+    @db_session
     def login(self, username=None, password=None):
         if username == None:
             tparams = {
@@ -147,13 +136,8 @@ class WebApp(object):
             }
             return self.render('login.html', tparams)
         else:
-            #self.do_authenticationJSON(username, password)
             self.do_authenticationDB(username, password)
             if not self.get_user()['is_authenticated']:
-                db_con = WebApp.db_connection(WebApp.dbsqlite)
-                sql = "select name from user_db where email == '{}'".format(username)
-                cur = db_con.execute(sql)
-                row = cur.fetchone()
                 tparams = {
                     'title': 'Login',
                     'errors': True,
@@ -165,11 +149,12 @@ class WebApp(object):
                 raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
+    @db_session
     def signup(self, email=None, password=None, fullname=None, address=None, phone=None, card=None):
         tparams = {'user' : self.get_user()}
         if email != None and password != None and fullname != None and address != None and phone != None and card != None:
             if len(email) != 0 and len(password) != 0 and len(fullname) != 0 and len(address) != 0 and len(phone) != 0 and len(card) != 0:
-                WebApp.db_add_user(WebApp.dbsqlite, email, password, fullname, address, phone, card)
+                User(email=email, password=password, name=fullname, address=address, phone=phone, card=card, superuser=False)
             tparams = {
                 'user' : self.get_user(),
                 'email' : len(email),
@@ -209,18 +194,72 @@ class WebApp(object):
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
+    @db_session
     def shop(self):
         tparams = {
             'user': self.get_user(),
             'year': datetime.now().year,
+            'products': select(p for p in Product )
         }
         return self.render('shop_navigation.html', tparams)
 
+    @cherrypy.expose
+    @db_session
+    @cherrypy.tools.json_in()
+    def product_management(self):
+        user = self.get_user()
+        if user['superuser'] == True:
+            if cherrypy.request.method == "POST":
+                dicio = cherrypy.request.json
+                if dicio['mode'] == 'update':
+                    product = Product[dicio['id']]
+                    product.name = dicio['name']
+                    product.weight = dicio['weight']
+                elif dicio['mode'] == 'delete':
+                    Product[dicio['id']].delete()
+                else:
+                    pass
+
+            fn = os.path.join(os.path.dirname(__file__), "data/img/")
+            array = dict()
+            for file in os.listdir(fn):
+                file1 = open(os.path.join("data/img/", file), "rb")
+                f = base64.b64encode(file1.read())
+                array[file] = f
+                print(file)
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product_Wrapper),
+                'array': array
+            }
+            return self.render('product_management.html', tparams)
+        else:
+            raise cherrypy.HTTPRedirect("/user_homepage")
+
+
+    
 
     @cherrypy.expose
     def shut(self):
         cherrypy.engine.exit()
 
+    @cherrypy.expose
+    @db_session
+    def new_product(self, name, weight, price, description, image):
+        p = Product(name=name, weight=weight, price=price, description=description)
+        commit()
+        fn = os.path.join(os.path.dirname(__file__), "data/img/" + str(p.id) + ".jpg")
+        file1 = io.BytesIO(image.file.read())
+        myFile = open(fn, 'wb')
+        myFile.write(file1.read1())
+        myFile.close()
+        tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product_Wrapper)
+            }
+        return self.render('product_management.html', tparams)
 
 if __name__ == '__main__':
     conf = {
@@ -231,6 +270,10 @@ if __name__ == '__main__':
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': './static'
+        },
+        '/img': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': './data/img'
         }
     }
     cherrypy.quickstart(WebApp(), '/', conf)

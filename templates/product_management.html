@@ -1,0 +1,125 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<style>
+    table #delete_product{
+    display: none;
+}
+table tr:hover #delete_product{
+    display: block;
+}
+</style>
+{% endblock head %}
+
+{% block content %}
+
+<div id="new_product">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Add New Product
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="name" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form action='/new_product' method='POST' enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input class="form-control" name="name" placeholder="Name"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <input name="weight" class="form-control" placeholder="Weight">
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="price" class="form-control" cols="40" rows="5" placeholder="Price"></textarea>
+                    </div>
+                    <div class="modal-body">
+                            <textarea name="description" class="form-control" cols="40" rows="5" placeholder="Description"></textarea>
+                        </div>
+                    <div class="modal-body"> 
+                            <input type="file" class="form-control-file" name="image">
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="save" type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<table style="width:75%" class="table-striped">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Weight</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Image</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td class="id">{{product.id}}</td>
+        <td><input class="form-control" value="{{product.name}}"></td>
+        <td><input class="form-control" value="{{product.weight}}"></td>
+        <td><input class="form-control" value="{{product.description}}"></td>
+        <td><input class="form-control" value="{{product.price}}"></td>
+        <td>
+            <div>
+                <img src="/img/{{product.id}}.jpg" style="width:50px;">
+                <form method="post">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="myFile">
+                        <button id="replace_image" type="button" data-id="{{product.id}}" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </td>
+        <td>
+            <div><button id="delete_product" type="button" data-id="{{product.id}}" class="btn btn-danger">Delete</button></div>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+{% endblock content %}
+{% block functions %}
+<script>
+    $(document).ready(function () {
+        $('tr').change(function () {
+            var object = {
+                mode: 'update',
+                id: $(this).find('td')[0].innerHTML,
+                name: $(this).find('input')[0].value,
+                weight: $(this).find('input')[1].value
+            };
+            console.log(object);
+            ajax_post(object);
+        });
+        $(this).on('click', '#delete_product', function () {
+            var object = {
+                mode: 'delete',
+                id: $(this).data('id')
+            };
+            console.log(object);
+            ajax_post(object);
+        });
+
+        function ajax_post(object) {
+            $.ajax({
+                type: 'POST',
+                url: '/product_management',
+                data: JSON.stringify(object),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+        }
+    });
+</script>
+{% endblock functions %}

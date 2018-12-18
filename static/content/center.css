@@ -27,7 +27,7 @@
   border: 10px solid white;
   vertical-align: middle;
   border-width: 2px;
-
+  border-radius: 20px;
   position: relative;
   top: 120%;
   left: 50%;
@@ -47,7 +47,6 @@
 
 /* Slideshow container */
 .slideshow-container {
-  max-width: 100%;
   position: relative;
   margin: auto;
 }
