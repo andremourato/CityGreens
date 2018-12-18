@@ -187,7 +187,6 @@ class WebApp(object):
         }
         return self.render('contact.html', tparams)
 
-
     @cherrypy.expose
     def logout(self):
         self.set_user()
@@ -237,7 +236,15 @@ class WebApp(object):
         else:
             raise cherrypy.HTTPRedirect("/user_homepage")
 
-
+    @cherrypy.expose
+    def cart(self):
+        tparams = {
+            'title': 'Cart',
+            'message': 'Your cart page.',
+            'user': self.get_user(),
+            'year': datetime.now().year,
+        }
+        return self.render('cart.html', tparams)
     
 
     @cherrypy.expose
