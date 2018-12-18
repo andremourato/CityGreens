@@ -7,13 +7,13 @@
   transform: translate(-50%, -50%);
 }
 .logo{
-  width: 200px;
-  height: 200px;
+  width: 260px;
+  height: 260px;
   background-image: url(/static/images/Icon_V2.png);
   background-position: center;
   background-size: cover;
   position: absolute;
-  top: 0%;
+  top: -20%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 111;
@@ -22,6 +22,7 @@
 
   text-align: center;
   margin: 0 auto;
+  font-size: 20px;
   background: black;
   color: white;
   border: 10px solid white;
@@ -29,7 +30,7 @@
   border-width: 2px;
   border-radius: 20px;
   position: relative;
-  top: 65%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -58,7 +59,7 @@
 /* Caption text */
 .text {
   color: #f2f2f2;
-  font-size: 15px;
+  font-size: 25px;
   padding: 8px 12px;
   position: absolute;
   bottom: 8px;
@@ -114,11 +115,11 @@
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
-    padding: 20px;
+    padding: 25px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 25px;
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 50%;
