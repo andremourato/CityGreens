@@ -120,10 +120,11 @@
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 50%;
-    position: relative;
-    top: 130%;
+    position: absolute;
+    top: 150%;
     left: 50%;
     transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
     z-index: 1;
     justify-content:center;
 }
