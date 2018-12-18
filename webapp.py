@@ -205,33 +205,32 @@ class WebApp(object):
 
     @cherrypy.expose
     @db_session
-    @cherrypy.tools.json_in()
-    def product_management(self):
+    def product_management(self, id=None, price=None, description=None, image=None, name=None, weight=None, **kwargs):
         user = self.get_user()
         if user['superuser'] == True:
             if cherrypy.request.method == "POST":
-                dicio = cherrypy.request.json
-                if dicio['mode'] == 'update':
-                    product = Product[dicio['id']]
-                    product.name = dicio['name']
-                    product.weight = dicio['weight']
-                elif dicio['mode'] == 'delete':
-                    Product[dicio['id']].delete()
-                else:
-                    pass
+                if 'update' in kwargs:
+                    product = Product[id]
+                    product.name = name
+                    product.weight = weight
+                    product.price = price
+                    product.description = description
+                    if image.file is not None:
+                        self.image_wrapper(id, image)
+                    else:
+                        pass
+                elif 'delete' in kwargs:
+                    Product[id].delete()
+                    self.image_wrapper(id, image, delete=True)
+                elif 'add' in kwargs:
+                    p = Product(name=name, weight=weight, price=price, description=description)
+                    commit()
+                    self.image_wrapper(p.id, image)
 
-            fn = os.path.join(os.path.dirname(__file__), "data/img/")
-            array = dict()
-            for file in os.listdir(fn):
-                file1 = open(os.path.join("data/img/", file), "rb")
-                f = base64.b64encode(file1.read())
-                array[file] = f
-                print(file)
             tparams = {
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'products': select(p for p in Product_Wrapper),
-                'array': array
             }
             return self.render('product_management.html', tparams)
         else:
@@ -244,22 +243,15 @@ class WebApp(object):
     def shut(self):
         cherrypy.engine.exit()
 
-    @cherrypy.expose
-    @db_session
-    def new_product(self, name, weight, price, description, image):
-        p = Product(name=name, weight=weight, price=price, description=description)
-        commit()
-        fn = os.path.join(os.path.dirname(__file__), "data/img/" + str(p.id) + ".jpg")
-        file1 = io.BytesIO(image.file.read())
-        myFile = open(fn, 'wb')
-        myFile.write(file1.read1())
-        myFile.close()
-        tparams = {
-                'user': self.get_user(),
-                'year': datetime.now().year,
-                'products': select(p for p in Product_Wrapper)
-            }
-        return self.render('product_management.html', tparams)
+    def image_wrapper(self, id, image, delete=False):
+        fn = os.path.join(os.path.dirname(__file__), "data/img/" + str(id) + ".jpg")
+        if delete:
+            os.remove(fn)
+        else:
+            file1 = io.BytesIO(image.file.read())
+            myFile = open(fn, 'wb')
+            myFile.write(file1.read1())
+            myFile.close()
 
 if __name__ == '__main__':
     conf = {
