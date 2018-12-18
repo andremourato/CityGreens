@@ -13,7 +13,7 @@
   background-position: center;
   background-size: cover;
   position: absolute;
-  top: 55%;
+  top: 0%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 111;
@@ -29,7 +29,7 @@
   border-width: 2px;
   border-radius: 20px;
   position: relative;
-  top: 120%;
+  top: 65%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -51,6 +51,8 @@
   overflow: hidden;
   position: fixed;
   width: 100%;
+  min-height:50%;
+  max-height: 120%;
 }
 
 /* Caption text */
@@ -121,10 +123,11 @@
     cursor: pointer;
     border-radius: 50%;
     position: absolute;
-    top: 150%;
+    top: 90%;
     left: 50%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
+    -webkit-transform:translate(-50%, -50%);
     z-index: 1;
     justify-content:center;
 }
