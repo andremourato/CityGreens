@@ -2,4 +2,27 @@
 {% block content %}
 
 
+  <table style="width:75%" class="table-striped">
+    <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <form method='POST' enctype="multipart/form-data">
+            <td><label>{{ product.name  }}</label><input name="name" type="hidden" class="form-control" value="{{product.name}}"></td>
+            <td><input name="quantity" type="text" class="form-control" value="1"></td>
+            <td><label>{{ product.price }}</label><input name="price" type="hidden" class="form-control" value="{{product.price}}"></td>
+
+        <td>
+            <button id="delete" name="delete" type="submit" class="btn btn-danger">Delete</button>
+        </td>
+        </form>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
 {% endblock %}
