@@ -27,7 +27,6 @@ class Product_Wrapper(db.Entity):
     description = Required(str)
     price = Required(float)
     subscription = Set("Subscription")
-    transaction = Set("Transaction")
 
 class Product(Product_Wrapper):
     weight = Required(float)
@@ -46,7 +45,7 @@ class Transaction(db.Entity):
     id = PrimaryKey(int, auto=True)
     checkout = Required(bool)
     user = Required(User)
-    products = Set("Product_Wrapper")
+    products = Optional(Json)
     date = Required(datetime)
 
 db.generate_mapping(create_tables=True)

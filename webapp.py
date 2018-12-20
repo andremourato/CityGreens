@@ -60,21 +60,16 @@ class WebApp(object):
                 'card'     : user.card,
             }
         return user_info
-
-    def db_modify_user(db_file,email,password,fullname,address,phone,card):
-        db_con = WebApp.db_connection(WebApp.dbsqlite)
-        cur = db_con.execute("SELECT * FROM user_db WHERE email == '{}'".format(email))
-        row = cur.fetchone()
-        password = password if password else row[1]
-        fullname = fullname if fullname else row[3]
-        address = address if address else row[4]
-        phone = phone if phone else row[5]
-        card = card if card else row[6]
-        new_elem = (email, password, 0, fullname, address, phone, card)
-        db_con.execute("DELETE FROM user_db WHERE email == '{}'".format(email))
-        db_con.execute("INSERT INTO user_db VALUES {}".format(new_elem))
-        db_con.commit()
-        db_con.close()
+    
+    @db_session
+    def db_modify_user(email,password,fullname,address,phone,card):
+        user = User.get(email=email)
+        user.password = password if password else user.password
+        user.name = fullname if fullname else user.name
+        user.address = address if address else user.address
+        user.phone = phone if phone else user.phone
+        user.card = card if card else user.card
+        commit()
 
     def db_connection(db_file):
         try:
@@ -109,7 +104,7 @@ class WebApp(object):
         if user['is_authenticated']:
             if password or fullname or address or phone or card:
                 print(fullname)
-                WebApp.db_modify_user(WebApp.dbsqlite,user['username'],password,fullname,address,phone,card)
+                WebApp.db_modify_user(user['username'],password,fullname,address,phone,card)
             db_info = self.db_get_user(user)
             tparams = {
                 'user' : user,
@@ -194,37 +189,64 @@ class WebApp(object):
 
     @cherrypy.expose
     @db_session
-    def shop(self):
-        tparams = {
-            'user': self.get_user(),
-            'year': datetime.now().year,
-            'products': select(p for p in Product )
-        }
+    def shop(self, add2cart=None):
+        user = self.get_user()
+        number = 0
+        if user['username']:
+            t = Transaction.get(user=User[user['username']], checkout=False)
+            items = 0
+            if cherrypy.request.method == "POST":
+                if t == None:
+                    t = Transaction(checkout=False, user=User[user['username']], date=datetime.now(), products={str(add2cart): 1})
+                    commit()
+
+                else:
+                    t.products[add2cart] += 1
+                    commit()
+            
+            if t == None:
+                items = 0
+            else:
+                for v in t.products.values():
+                    items += int(v)
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product),
+                'items': items
+            }
+        else:
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(p for p in Product),
+            }
         return self.render('shop_navigation.html', tparams)
 
     @cherrypy.expose
     @db_session
-    def product_management(self, id=None, price=None, description=None, image=None, name=None, weight=None, **kwargs):
+    def product_management(self, **kwargs):
         user = self.get_user()
+        params = cherrypy.request.body.params
         if user['superuser'] == True:
             if cherrypy.request.method == "POST":
-                if 'update' in kwargs:
-                    product = Product[id]
-                    product.name = name
-                    product.weight = weight
-                    product.price = price
-                    product.description = description
-                    if image.file is not None:
-                        self.image_wrapper(id, image)
+                if 'update' in params:
+                    product = Product[params['id']]
+                    product.name = params['name']
+                    product.weight = params['weight']
+                    product.price = params['price']
+                    product.description = params['description']
+                    if params['image'].file is not None:
+                        self.image_wrapper(params['id'], params['image'])
                     else:
                         pass
-                elif 'delete' in kwargs:
-                    Product[id].delete()
-                    self.image_wrapper(id, image, delete=True)
-                elif 'add' in kwargs:
-                    p = Product(name=name, weight=weight, price=price, description=description)
+                elif 'delete' in params:
+                    Product[params['id']].delete()
+                    self.image_wrapper(params['id'], params['image'], delete=True)
+                elif 'add' in params:
+                    p = Product(name=params['name'], weight=params['weight'], price=params['price'], description=params['description'])
                     commit()
-                    self.image_wrapper(p.id, image)
+                    self.image_wrapper(p.id, params['image'])
 
             tparams = {
                 'user': self.get_user(),
@@ -236,13 +258,32 @@ class WebApp(object):
             raise cherrypy.HTTPRedirect("/user_homepage")
 
     @cherrypy.expose
-    def cart(self):
-        tparams = {
-            'title': 'Cart',
-            'message': 'Your cart page.',
-            'user': self.get_user(),
-            'year': datetime.now().year,
-        }
+    @db_session
+    def cart(self, **kwargs):
+        user = self.get_user()
+        products = None
+        if user['username']:
+            t = Transaction.get(user=User[user['username']], checkout=False)
+            
+            if cherrypy.request.method == 'POST':
+                if 'delete' in kwargs:
+                    print(kwargs['delete'])
+                    t.products.remove(kwargs['delete'])
+                    commit()
+                elif 'update' in kwargs:
+                    t.products = {str(kwargs['update']): int(kwargs['quantity'])}
+                    commit()
+
+            quantity = dict(t.products)
+            products = select(p for p in Product)
+            l2 = [{'id': p.id, 'name': p.name, 'price': p.price, 'quantity': quantity[str(p.id)]} for p in products if str(p.id) in quantity]
+            tparams = {
+                'title': 'Cart',
+                'message': 'Your cart page.',
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': l2
+            }
         return self.render('cart.html', tparams)
     
 
