@@ -316,4 +316,11 @@ if __name__ == '__main__':
             'tools.staticdir.dir': './data/img'
         }
     }
+    '''
+    cherrypy.config.update({
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 80,
+        'environment': 'production'
+    })
+    '''
     cherrypy.quickstart(WebApp(), '/', conf)
