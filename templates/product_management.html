@@ -2,10 +2,10 @@
 
 {% block head %}
 <style>
-    table #delete_product{
+    table #delete, table #update{
     display: none;
 }
-table tr:hover #delete_product{
+table tr:hover #delete, table tr:hover #update{
     display: block;
 }
 </style>
@@ -22,7 +22,7 @@ table tr:hover #delete_product{
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="name" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <form action='/new_product' method='POST' enctype="multipart/form-data">
+            <form method='POST' enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <input class="form-control" name="name" placeholder="Name"></h5>
@@ -34,14 +34,14 @@ table tr:hover #delete_product{
                         <textarea name="price" class="form-control" cols="40" rows="5" placeholder="Price"></textarea>
                     </div>
                     <div class="modal-body">
-                            <textarea name="description" class="form-control" cols="40" rows="5" placeholder="Description"></textarea>
-                        </div>
-                    <div class="modal-body"> 
-                            <input type="file" class="form-control-file" name="image">
-                        </div>
+                        <textarea name="description" class="form-control" cols="40" rows="5" placeholder="Description"></textarea>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" class="form-control-file" name="image">
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button id="save" type="submit" class="btn btn-primary">Save changes</button>
+                        <button name="add" type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </form>
@@ -60,25 +60,22 @@ table tr:hover #delete_product{
     </tr>
     {% for product in products %}
     <tr>
-        <td class="id">{{product.id}}</td>
-        <td><input class="form-control" value="{{product.name}}"></td>
-        <td><input class="form-control" value="{{product.weight}}"></td>
-        <td><input class="form-control" value="{{product.description}}"></td>
-        <td><input class="form-control" value="{{product.price}}"></td>
-        <td>
-            <div>
+        <form method='POST' enctype="multipart/form-data">
+            <td><input name="id" type="hidden" value="{{product.id}}"></td>
+            <td><input name="name" class="form-control" value="{{product.name}}"></td>
+            <td><input name="weight" class="form-control" value="{{product.weight}}"></td>
+            <td><input name="description" class="form-control" value="{{product.description}}"></td>
+            <td><input name="price" class="form-control" value="{{product.price}}"></td>
+            <td>
                 <img src="/img/{{product.id}}.jpg" style="width:50px;">
-                <form method="post">
-                    <div class="form-group">
-                        <input type="file" class="form-control-file" name="myFile">
-                        <button id="replace_image" type="button" data-id="{{product.id}}" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </td>
+                <input type="file" class="form-control-file" name="image">
+            </td>
+
         <td>
-            <div><button id="delete_product" type="button" data-id="{{product.id}}" class="btn btn-danger">Delete</button></div>
+            <button id="update" name="update" type="submit" class="btn btn-primary">Update Product</button>
+            <button id="delete" name="delete" type="submit" class="btn btn-danger">Delete</button>
         </td>
+        </form>
     </tr>
     {% endfor %}
 
@@ -86,40 +83,3 @@ table tr:hover #delete_product{
 
 
 {% endblock content %}
-{% block functions %}
-<script>
-    $(document).ready(function () {
-        $('tr').change(function () {
-            var object = {
-                mode: 'update',
-                id: $(this).find('td')[0].innerHTML,
-                name: $(this).find('input')[0].value,
-                weight: $(this).find('input')[1].value
-            };
-            console.log(object);
-            ajax_post(object);
-        });
-        $(this).on('click', '#delete_product', function () {
-            var object = {
-                mode: 'delete',
-                id: $(this).data('id')
-            };
-            console.log(object);
-            ajax_post(object);
-        });
-
-        function ajax_post(object) {
-            $.ajax({
-                type: 'POST',
-                url: '/product_management',
-                data: JSON.stringify(object),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (data) {
-                    console.log(data)
-                }
-            });
-        }
-    });
-</script>
-{% endblock functions %}

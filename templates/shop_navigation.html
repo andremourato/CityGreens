@@ -7,7 +7,7 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-3">
-      <h1 class="my-4">Shop Name</h1>
+      <h1 class="my-4">Shop</h1>
       <div class="list-group">
         <a href="#" class="list-group-item active">Products</a>
         <a href="#" class="list-group-item">Menus</a>
@@ -20,15 +20,20 @@
         {% for product in products %}
         <div class="col-lg-4 col-sm-6 portfolio-item">
           <div class="card h-100">
+
             <a href="#"><img class="card-img-top" src="/img/{{product.id}}.jpg" alt=""></a>
             <div class="card-body">
+
               <h4 class="card-title">
                 <a href="#">{{ product.name }}</a>
               </h4>
-              <p>weight: {{product.weight}} g</p>
-              <p>price: {{product.price}}</p>
+              <p>weight: {{product.weight}} kg</p>
+              <p>price: {{product.price}} €</p>
               <p class="card-text">{{product.description}}</p>
             </div>
+            <form method="POST">
+              <button type="submit" class="btn" name="add2cart" value="{{product.id}}">Add to cart</button>
+            </form>
           </div>
         </div>
         {% endfor %}
@@ -70,24 +75,24 @@
 
 {% endblock %}
 {% block footer %}
-    <style>
-      .footer {
-        position: relative;
-        bottom:0px;
-        width:100%;
-        background-color: #efefef;
-        text-align: center;
-        opacity: 1.0;
-      }
-    </style>
+<style>
+  .footer {
+    position: relative;
+    bottom: 0px;
+    width: 100%;
+    background-color: #efefef;
+    text-align: center;
+    opacity: 1.0;
+  }
+</style>
 
-    <footer class="py-5 bg-dark footer" >
-      <div class="container">
-        <p class="m-0 text-center text-white">
-          Copyright &copy; CityGreens 2018
-        </p>
-      </div>
-      <!-- /.container -->
-    </footer>
+<footer class="py-5 bg-dark footer">
+  <div class="container">
+    <p class="m-0 text-center text-white">
+      Copyright &copy; CityGreens 2018
+    </p>
+  </div>
+  <!-- /.container -->
+</footer>
 
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+  <table style="width:75%" class="table-striped">
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+
+    </tr>
+    {% for product in products %}
+    <tr>
+        <form method='POST'>
+            <td><label>{{ product.name  }}</label><input name="name" type="hidden" class="form-control" value="{{product.name}}"></td>
+            <td><label>{{ product.price }}</label><input name="price" type="hidden" class="form-control" value="{{product.price}}"></td>
+                
+                <td>
+                
+                <input name="quantity" type="text" class="form-control" placeholder="{{product.quantity}}"></td>
+                
+        <td>
+            <button id="update" name="update" type="submit" value="{{product.id}}" class="btn btn-primary">Update</button>
+            <button id="delete" name="delete" type="submit" value="{{product.id}}" class="btn btn-danger">Delete</button>
+        </td>
+        </form>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+{% endblock %}
