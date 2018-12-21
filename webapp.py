@@ -274,9 +274,12 @@ class WebApp(object):
                     t.products = {str(kwargs['update']): int(kwargs['quantity'])}
                     commit()
 
-            quantity = dict(t.products)
-            products = select(p for p in Product)
-            l2 = [{'id': p.id, 'name': p.name, 'price': p.price, 'quantity': quantity[str(p.id)]} for p in products if str(p.id) in quantity]
+            if t != None:
+                quantity = dict(t.products)
+                products = select(p for p in Product)
+                l2 = [{'id': p.id, 'name': p.name, 'price': p.price, 'quantity': quantity[str(p.id)]} for p in products if str(p.id) in quantity]
+            else:
+                l2 = []
             tparams = {
                 'title': 'Cart',
                 'message': 'Your cart page.',
