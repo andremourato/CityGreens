@@ -200,8 +200,11 @@ class WebApp(object):
                     t = Transaction(checkout=False, user=User[user['username']], date=datetime.now(), products={str(add2cart): 1})
                     commit()
 
+                elif str(add2cart) not in t.products.keys():
+                    t.products[str(add2cart)] = 1
+                    commit()
                 else:
-                    t.products[add2cart] += 1
+                    t.products[str(add2cart)] += 1
                     commit()
             
             if t == None:
@@ -227,6 +230,7 @@ class WebApp(object):
     @db_session
     def product_management(self, **kwargs):
         user = self.get_user()
+        #aceder aos campos name do html
         params = cherrypy.request.body.params
         if user['superuser'] == True:
             if cherrypy.request.method == "POST":
@@ -264,14 +268,13 @@ class WebApp(object):
         products = None
         if user['username']:
             t = Transaction.get(user=User[user['username']], checkout=False)
-            
             if cherrypy.request.method == 'POST':
                 if 'delete' in kwargs:
                     print(kwargs['delete'])
-                    t.products.remove(kwargs['delete'])
+                    t.products.pop(kwargs['delete'])
                     commit()
                 elif 'update' in kwargs:
-                    t.products = {str(kwargs['update']): int(kwargs['quantity'])}
+                    t.products[str(kwargs['update'])] = int(kwargs['quantity'])
                     commit()
 
             if t != None:
