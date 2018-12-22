@@ -47,9 +47,7 @@ class WebApp(object):
 
     @db_session
     def db_get_user(db_file,user):
-        print(user)
         user = User[user['username']]
-        print(user)
         if user:
             user_info = {
                 'email' : user.email,
@@ -103,7 +101,6 @@ class WebApp(object):
         # User must be authenticated before accessing the user homepage
         if user['is_authenticated']:
             if password or fullname or address or phone or card:
-                print(fullname)
                 WebApp.db_modify_user(user['username'],password,fullname,address,phone,card)
             db_info = self.db_get_user(user)
             tparams = {
@@ -150,6 +147,7 @@ class WebApp(object):
         if email != None and password != None and fullname != None and address != None and phone != None and card != None:
             if len(email) != 0 and len(password) != 0 and len(fullname) != 0 and len(address) != 0 and len(phone) != 0 and len(card) != 0:
                 User(email=email, password=password, name=fullname, address=address, phone=phone, card=card, superuser=False)
+                commit()
             tparams = {
                 'user' : self.get_user(),
                 'email' : len(email),
@@ -159,6 +157,7 @@ class WebApp(object):
                 'phone' : len(phone),
                 'card' : len(card)
             }
+            raise cherrypy.HTTPRedirect("/login")
         return self.render('signup.html',tparams)
 
     @cherrypy.expose
@@ -288,7 +287,27 @@ class WebApp(object):
                 'products': l2
             }
         return self.render('cart.html', tparams)
-    
+
+    @cherrypy.expose
+    @db_session
+    def checkout(self):
+        user = self.get_user()
+        t = Transaction.get(checkout=False, user=User[user['username']])
+        if t:
+            tparams = {
+                'title': 'Checkout',
+                'message': 'Checkout page',
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            # Clear the cart and stores the checkout information
+            t = Transaction.get(checkout=False, user=User[user['username']])
+            t.checkout = True # Checkout complete
+            t.date = datetime.now()
+            commit()
+            return self.render('checkout.html',tparams)
+        else:
+            raise cherrypy.HTTPRedirect('/cart')
 
     @cherrypy.expose
     def shut(self):
