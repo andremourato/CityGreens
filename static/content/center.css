@@ -1,15 +1,4 @@
 
-.btn-primary,
-.btn-primary:hover,
-.btn-primary:active,
-.btn-primary:visited,
-.btn-primary:focus {
-    background-color: saddlebrown;
-    border-color: saddlebrown;
-    width: 200px;
-    height: 50px;
-}
-
 .center-table {
    height: 200px;
   position: absolute;
