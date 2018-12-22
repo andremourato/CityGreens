@@ -1,19 +1,37 @@
 
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: saddlebrown;
+    border-color: saddlebrown;
+    width: 200px;
+    height: 50px;
+}
+
 .center-table {
    height: 200px;
   position: absolute;
-  top: 40%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.subtitle{
+    font: 35px arial, sans-serif;
+    color: #ffffff;
+    text-align: center;
+}
+
 .logo{
-  width: 260px;
-  height: 260px;
+  width: 400px;
+  height: 400px;
   background-image: url(/static/images/Icon_V2.png);
   background-position: center;
   background-size: cover;
-  position: absolute;
-  top: -20%;
+  position: relative;
+  top: 80%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 111;
@@ -48,9 +66,9 @@
 
 /* Slideshow container */
 .slideshow-container {
-  margin: auto;
-  overflow: hidden;
-  position: fixed;
+  /*margin: auto;
+  overflow: hidden;*/
+  position: relative;
   width: 100%;
   min-height:50%;
   max-height: 120%;
@@ -110,28 +128,6 @@
   .text {font-size: 11px}
 }
 
-
-.button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 25px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 25px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 50%;
-    position: absolute;
-    top: 90%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -webkit-transform:translate(-50%, -50%);
-    z-index: 1;
-    justify-content:center;
-}
 .button:hover {
     background-color: green;
 }

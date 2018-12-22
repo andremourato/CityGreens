@@ -29,7 +29,7 @@
     }
 
     .settings-menu{
-        position: fixed;
+        position: relative;
         top: 10%;
         left: 7%;
         width: 30%;
@@ -151,82 +151,84 @@
 
 </script>
 
-<div class="bg">
-    <div class="table settings-menu">
-        <table class="table table-hover">
-          <tbody>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_email.png">
-              </th>
-              <td class="item">
-                  <div>{{email}}</div>
-                  <div class="field">E-mail</div>
-              </td>
-              <td></td>
-            </tr>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_password.png">
-              </th>
-              <td class="item">
-                  <div id="field-password">{{password}}</div>
-                  <div class="field" id="field-password-text">Password</div>
-              </td>
-              <td>
-                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPassword()" onmouseover="" style="cursor: pointer;">
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_fullname.png">
-              </th>
-              <td class="item">
-                  <div id="field-fullname">{{fullname}}</div>
-                  <div class="field" id="field-fullname-text">Full Name</div>
-              </td>
-              <td>
-                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickFullname()" onmouseover="" style="cursor: pointer;">
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_address.png">
-              </th>
-              <td class="item">
-                  <div id="field-address">{{address}}</div>
-                  <div class="field" id="field-address-text">Address</div>
-              </td>
-              <td>
-                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickAddress()" onmouseover="" style="cursor: pointer;">
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_phone.png">
-              </th>
-              <td class="item">
-                  <div id="field-phone">{{phone}}</div>
-                  <div class="field" id="field-phone-text">Phone Number</div>
-              </td>
-              <td>
-                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPhone()" onmouseover="" style="cursor: pointer;">
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">
-                  <img src="../static/images/user_homepage/user_homepage_icon_card.jpg">
-              </th>
-              <td class="item">
-                  <div id="field-card">{{card}}</div>
-                  <div class="field" id="field-card-text">Payment Card Number</div>
-              </td>
-              <td>
-                  <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickCard()" onmouseover="" style="cursor: pointer;">
-              </td>
-            </tr>
-          </tbody>
-        </table>
+<div class="container">
+    <div class="bg">
+        <div class="table settings-menu">
+            <table class="table table-hover">
+              <tbody>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_email.png">
+                  </th>
+                  <td class="item">
+                      <div>{{email}}</div>
+                      <div class="field">E-mail</div>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_password.png">
+                  </th>
+                  <td class="item">
+                      <div id="field-password">{{password}}</div>
+                      <div class="field" id="field-password-text">Password</div>
+                  </td>
+                  <td>
+                      <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPassword()" onmouseover="" style="cursor: pointer;">
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_fullname.png">
+                  </th>
+                  <td class="item">
+                      <div id="field-fullname">{{fullname}}</div>
+                      <div class="field" id="field-fullname-text">Full Name</div>
+                  </td>
+                  <td>
+                      <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickFullname()" onmouseover="" style="cursor: pointer;">
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_address.png">
+                  </th>
+                  <td class="item">
+                      <div id="field-address">{{address}}</div>
+                      <div class="field" id="field-address-text">Address</div>
+                  </td>
+                  <td>
+                      <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickAddress()" onmouseover="" style="cursor: pointer;">
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_phone.png">
+                  </th>
+                  <td class="item">
+                      <div id="field-phone">{{phone}}</div>
+                      <div class="field" id="field-phone-text">Phone Number</div>
+                  </td>
+                  <td>
+                      <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickPhone()" onmouseover="" style="cursor: pointer;">
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                      <img src="../static/images/user_homepage/user_homepage_icon_card.jpg">
+                  </th>
+                  <td class="item">
+                      <div id="field-card">{{card}}</div>
+                      <div class="field" id="field-card-text">Payment Card Number</div>
+                  </td>
+                  <td>
+                      <img src="../static/images/user_homepage/user_homepage_icon_gear.png" onclick="clickCard()" onmouseover="" style="cursor: pointer;">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
