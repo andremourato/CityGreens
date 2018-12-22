@@ -290,7 +290,7 @@ class WebApp(object):
                     else:
                         pass
                 elif 'delete' in params:
-                    Product[params['id']].delete()
+                    Menu[params['id']].delete()
                     self.image_wrapper(params['id'], params['image'], delete=True)
                 elif 'add' in params:
                     m = Menu(name=params['name'], price=params['price'], description=params['description'])
@@ -300,7 +300,7 @@ class WebApp(object):
             tparams = {
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'products': select(m for m in Menu),
+                'menus': select(m for m in Menu),
             }
             return self.render('menu_management.html', tparams)
         else:
