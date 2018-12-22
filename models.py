@@ -14,7 +14,7 @@ class User(db.Entity):
     card = Required(str)
     superuser = Required(bool)
     subscription = Optional("Subscription")
-    transaction = Optional("Transaction")
+    transaction = Set("Transaction")
     
 class Nutritional_Info(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -38,13 +38,13 @@ class Menu(Product_Wrapper):
 
 class Subscription(db.Entity):
     id = PrimaryKey(int, auto=True)
-    user = Required(User)
+    user = Required("User")
     products = Set("Product_Wrapper")
 
 class Transaction(db.Entity):
     id = PrimaryKey(int, auto=True)
     checkout = Required(bool)
-    user = Required(User)
+    user = Required("User")
     products = Optional(Json)
     date = Required(datetime)
 
