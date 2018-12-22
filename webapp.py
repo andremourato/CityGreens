@@ -199,8 +199,11 @@ class WebApp(object):
                     t = Transaction(checkout=False, user=User[user['username']], date=datetime.now(), products={str(add2cart): 1})
                     commit()
 
+                elif str(add2cart) not in t.products.keys():
+                    t.products[str(add2cart)] = 1
+                    commit()
                 else:
-                    t.products[add2cart] += 1
+                    t.products[str(add2cart)] += 1
                     commit()
             
             if t == None:
@@ -212,6 +215,7 @@ class WebApp(object):
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'products': select(p for p in Product),
+                'menus': select(m for m in Menu),
                 'items': items
             }
         else:
@@ -219,13 +223,24 @@ class WebApp(object):
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'products': select(p for p in Product),
+                'menus': select(m for m in Menu)
             }
         return self.render('shop_navigation.html', tparams)
+
+    @cherrypy.expose
+    def admin(self, **kwargs):
+        tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+            }
+        return self.render('admin.html', tparams)
+
 
     @cherrypy.expose
     @db_session
     def product_management(self, **kwargs):
         user = self.get_user()
+        #aceder aos campos name do html
         params = cherrypy.request.body.params
         if user['superuser'] == True:
             if cherrypy.request.method == "POST":
@@ -250,9 +265,43 @@ class WebApp(object):
             tparams = {
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'products': select(p for p in Product_Wrapper),
+                'products': select(p for p in Product),
             }
             return self.render('product_management.html', tparams)
+        else:
+            raise cherrypy.HTTPRedirect("/user_homepage")
+    
+    @cherrypy.expose
+    @db_session
+    def menu_management(self, **kwargs):
+        user = self.get_user()
+        #aceder aos campos name do html
+        params = cherrypy.request.body.params
+        if user['superuser'] == True:
+            if cherrypy.request.method == "POST":
+                if 'update' in params:
+                    menu = Menu[params['id']]
+                    menu.name = params['name']
+                    menu.price = params['price']
+                    menu.description = params['description']
+                    if params['image'].file is not None:
+                        self.image_wrapper(params['id'], params['image'])
+                    else:
+                        pass
+                elif 'delete' in params:
+                    Menu[params['id']].delete()
+                    self.image_wrapper(params['id'], params['image'], delete=True)
+                elif 'add' in params:
+                    m = Menu(name=params['name'], price=params['price'], description=params['description'])
+                    commit()
+                    self.image_wrapper(m.id, params['image'])
+
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'menus': select(m for m in Menu),
+            }
+            return self.render('menu_management.html', tparams)
         else:
             raise cherrypy.HTTPRedirect("/user_homepage")
 
@@ -263,14 +312,13 @@ class WebApp(object):
         products = None
         if user['username']:
             t = Transaction.get(user=User[user['username']], checkout=False)
-            
             if cherrypy.request.method == 'POST':
                 if 'delete' in kwargs:
                     print(kwargs['delete'])
-                    t.products.remove(kwargs['delete'])
+                    t.products.pop(kwargs['delete'])
                     commit()
                 elif 'update' in kwargs:
-                    t.products = {str(kwargs['update']): int(kwargs['quantity'])}
+                    t.products[str(kwargs['update'])] = int(kwargs['quantity'])
                     commit()
 
             if t != None:
