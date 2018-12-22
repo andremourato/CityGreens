@@ -1,0 +1,80 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<style>
+    table #delete, table #update{
+    display: none;
+}
+table tr:hover #delete, table tr:hover #update{
+    display: block;
+}
+</style>
+{% endblock head %}
+
+{% block content %}
+
+<div id="new_menu">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Add New Menu
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="name" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method='POST' enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input class="form-control" name="name" placeholder="Name"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="price" class="form-control" cols="40" rows="5" placeholder="Price"></textarea>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="description" class="form-control" cols="40" rows="5" placeholder="Description"></textarea>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" class="form-control-file" name="image">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button name="add" type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<table style="width:75%" class="table-striped">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Image</th>
+    </tr>
+    {% for menu in menus %}
+    <tr>
+        <form method='POST' enctype="multipart/form-data">
+            <td><input name="id" type="hidden" value="{{menu.id}}"></td>
+            <td><input name="name" class="form-control" value="{{menu.name}}"></td>
+            <td><input name="description" class="form-control" value="{{menu.description}}"></td>
+            <td><input name="price" class="form-control" value="{{menu.price}}"></td>
+            <td>
+                <img src="/img/{{menu.id}}.jpg" style="width:50px;">
+                <input type="file" class="form-control-file" name="image">
+            </td>
+
+        <td>
+            <button id="update" name="update" type="submit" class="btn btn-primary">Update Menu</button>
+            <button id="delete" name="delete" type="submit" class="btn btn-danger">Delete</button>
+        </td>
+        </form>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+{% endblock content %}
