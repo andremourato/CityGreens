@@ -216,6 +216,7 @@ class WebApp(object):
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'products': select(p for p in Product),
+                'menus': select(m for m in Menu),
                 'items': items
             }
         else:
@@ -223,8 +224,18 @@ class WebApp(object):
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'products': select(p for p in Product),
+                'menus': select(m for m in Menu)
             }
         return self.render('shop_navigation.html', tparams)
+
+    @cherrypy.expose
+    def admin(self, **kwargs):
+        tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+            }
+        return self.render('admin.html', tparams)
+
 
     @cherrypy.expose
     @db_session
@@ -255,9 +266,43 @@ class WebApp(object):
             tparams = {
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'products': select(p for p in Product_Wrapper),
+                'products': select(p for p in Product),
             }
             return self.render('product_management.html', tparams)
+        else:
+            raise cherrypy.HTTPRedirect("/user_homepage")
+    
+    @cherrypy.expose
+    @db_session
+    def menu_management(self, **kwargs):
+        user = self.get_user()
+        #aceder aos campos name do html
+        params = cherrypy.request.body.params
+        if user['superuser'] == True:
+            if cherrypy.request.method == "POST":
+                if 'update' in params:
+                    menu = Menu[params['id']]
+                    menu.name = params['name']
+                    menu.price = params['price']
+                    menu.description = params['description']
+                    if params['image'].file is not None:
+                        self.image_wrapper(params['id'], params['image'])
+                    else:
+                        pass
+                elif 'delete' in params:
+                    Product[params['id']].delete()
+                    self.image_wrapper(params['id'], params['image'], delete=True)
+                elif 'add' in params:
+                    m = Menu(name=params['name'], price=params['price'], description=params['description'])
+                    commit()
+                    self.image_wrapper(m.id, params['image'])
+
+            tparams = {
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'products': select(m for m in Menu),
+            }
+            return self.render('menu_management.html', tparams)
         else:
             raise cherrypy.HTTPRedirect("/user_homepage")
 
